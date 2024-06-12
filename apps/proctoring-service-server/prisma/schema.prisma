@@ -1,0 +1,76 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Student {
+  createdAt DateTime  @default(now())
+  email     String?
+  id        String    @id @default(cuid())
+  name      String?
+  sessions  Session[]
+  studentId String?
+  updatedAt DateTime  @updatedAt
+}
+
+model Exam {
+  createdAt DateTime  @default(now())
+  date      DateTime?
+  duration  Int?
+  id        String    @id @default(cuid())
+  name      String?
+  sessions  Session[]
+  updatedAt DateTime  @updatedAt
+}
+
+model Proctor {
+  createdAt  DateTime  @default(now())
+  email      String?
+  employeeId String?
+  id         String    @id @default(cuid())
+  name       String?
+  sessions   Session[]
+  updatedAt  DateTime  @updatedAt
+}
+
+model Violation {
+  createdAt   DateTime  @default(now())
+  description String?
+  id          String    @id @default(cuid())
+  session     Session?  @relation(fields: [sessionId], references: [id])
+  sessionId   String?
+  timestamp   DateTime?
+  typeField   String?
+  updatedAt   DateTime  @updatedAt
+}
+
+model Session {
+  createdAt  DateTime    @default(now())
+  endTime    DateTime?
+  exam       Exam?       @relation(fields: [examId], references: [id])
+  examId     String?
+  id         String      @id @default(cuid())
+  proctor    Proctor?    @relation(fields: [proctorId], references: [id])
+  proctorId  String?
+  startTime  DateTime?
+  student    Student?    @relation(fields: [studentId], references: [id])
+  studentId  String?
+  updatedAt  DateTime    @updatedAt
+  violations Violation[]
+}
+
+model User {
+  createdAt DateTime @default(now())
+  email     String?  @unique
+  firstName String?
+  id        String   @id @default(cuid())
+  lastName  String?
+  password  String
+  roles     Json
+  updatedAt DateTime @updatedAt
+  username  String   @unique
+}
